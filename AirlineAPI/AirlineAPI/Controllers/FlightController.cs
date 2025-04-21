@@ -1,5 +1,6 @@
 ﻿using AirlineAPI.DTOs;
 using AirlineAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirlineAPI.Controllers;
@@ -15,6 +16,7 @@ public class FlightController : ControllerBase
         _flightService = flightService;
     }
 
+    [Authorize]
     [HttpPost("add")]
     public async Task<IActionResult> AddFlight([FromBody] FlightDto dto)
     {

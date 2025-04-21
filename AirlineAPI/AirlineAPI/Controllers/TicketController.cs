@@ -1,5 +1,6 @@
 ﻿using AirlineAPI.DTOs;
 using AirlineAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirlineAPI.Controllers;
@@ -15,6 +16,7 @@ public class TicketController : ControllerBase
         _ticketService = ticketService;
     }
 
+    [Authorize]
     [HttpPost("buy")]
     public async Task<IActionResult> BuyTicket([FromBody] BuyTicketDto dto)
     {
@@ -35,6 +37,7 @@ public class TicketController : ControllerBase
         return Ok(new { message = result });
     }
 
+    [Authorize]
     [HttpGet("passengers")]
     public async Task<IActionResult> GetPassengerList(
         [FromQuery] string flightNumber,

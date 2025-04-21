@@ -158,3 +158,12 @@ D:\Github\SE4458-TodoAPI\AirlineAPI\AirlineAPI\bin\Debug\net8.0\runtimes\win-arm
 D:\Github\SE4458-TodoAPI\AirlineAPI\AirlineAPI\bin\Debug\net8.0\runtimes\win-x64\native\e_sqlite3.dll
 D:\Github\SE4458-TodoAPI\AirlineAPI\AirlineAPI\bin\Debug\net8.0\runtimes\win-x86\native\e_sqlite3.dll
 D:\Github\SE4458-TodoAPI\AirlineAPI\AirlineAPI\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
+D:\Github\SE4458-TodoAPI\AirlineAPI\AirlineAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Github\SE4458-TodoAPI\AirlineAPI\AirlineAPI\bin\Debug\net8.0\Microsoft.Bcl.Memory.dll
+D:\Github\SE4458-TodoAPI\AirlineAPI\AirlineAPI\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Github\SE4458-TodoAPI\AirlineAPI\AirlineAPI\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Github\SE4458-TodoAPI\AirlineAPI\AirlineAPI\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\Github\SE4458-TodoAPI\AirlineAPI\AirlineAPI\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\Github\SE4458-TodoAPI\AirlineAPI\AirlineAPI\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Github\SE4458-TodoAPI\AirlineAPI\AirlineAPI\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\Github\SE4458-TodoAPI\AirlineAPI\AirlineAPI\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
