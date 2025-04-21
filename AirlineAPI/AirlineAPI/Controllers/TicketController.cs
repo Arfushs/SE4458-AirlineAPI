@@ -38,7 +38,8 @@ public class TicketController : ControllerBase
     [HttpGet("passengers")]
     public async Task<IActionResult> GetPassengerList(
         [FromQuery] string flightNumber,
-        [FromQuery] DateTime date)
+        [FromQuery] DateTime date,
+        [FromQuery] int page = 1) 
     {
         var dto = new PassengerListQueryDto
         {
@@ -47,6 +48,14 @@ public class TicketController : ControllerBase
         };
 
         var result = await _ticketService.GetPassengerListAsync(dto);
-        return Ok(result);
+
+        var pageSize = 10;
+        var paged = result
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return Ok(paged);
     }
+
 }

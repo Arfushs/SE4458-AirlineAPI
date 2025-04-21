@@ -1,32 +1,59 @@
-﻿using AirlineAPI.DTOs;
+﻿using AirlineAPI.Data;
+using AirlineAPI.DTOs;
+using AirlineAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AirlineAPI.Services;
 
 public class FlightService : IFlightService
 {
-    private static readonly List<(int Id, FlightDto Flight)> Flights = new();
-    private static int _flightIdCounter = 1;
+    private readonly AppDbContext _context;
 
-    public Task<string> AddFlightAsync(FlightDto dto)
+    public FlightService(AppDbContext context)
     {
-        Flights.Add((_flightIdCounter++, dto));
-        return Task.FromResult("Flight added.");
+        _context = context;
     }
 
-    public Task<List<FlightDto>> QueryFlightsAsync(QueryFlightDto dto)
+    public async Task<string> AddFlightAsync(FlightDto dto)
     {
-        var result = Flights
+        var flightNumber = $"FL-{Guid.NewGuid().ToString().Substring(0, 6).ToUpper()}";
+
+        var flight = new Flight
+        {
+            FlightNumber = flightNumber,
+            AirportFrom = dto.AirportFrom,
+            AirportTo = dto.AirportTo,
+            DateFrom = dto.DateFrom,
+            DateTo = dto.DateTo,
+            Duration = dto.Duration,
+            Capacity = dto.Capacity
+        };
+
+        _context.Flights.Add(flight);
+        await _context.SaveChangesAsync();
+
+        return $"Flight added: {flightNumber}";
+    }
+
+    public async Task<List<FlightDto>> QueryFlightsAsync(QueryFlightDto dto)
+    {
+        var query = await _context.Flights
             .Where(f =>
-                f.Flight.AirportFrom == dto.AirportFrom &&
-                f.Flight.AirportTo == dto.AirportTo &&
-                f.Flight.DateFrom.Date >= dto.DateFrom.Date &&
-                f.Flight.DateTo.Date <= dto.DateTo.Date &&
-                f.Flight.Capacity >= dto.NumberOfPeople
-            )
-            .Select(f => f.Flight)
-            .ToList();
+                f.AirportFrom == dto.AirportFrom &&
+                f.AirportTo == dto.AirportTo &&
+                f.DateFrom.Date >= dto.DateFrom.Date &&
+                f.DateTo.Date <= dto.DateTo.Date &&
+                f.Capacity >= dto.NumberOfPeople)
+            .ToListAsync();
 
-        return Task.FromResult(result);
+        return query.Select(f => new FlightDto
+        {
+            AirportFrom = f.AirportFrom,
+            AirportTo = f.AirportTo,
+            DateFrom = f.DateFrom,
+            DateTo = f.DateTo,
+            Duration = f.Duration,
+            Capacity = f.Capacity
+        }).ToList();
     }
-    
 }

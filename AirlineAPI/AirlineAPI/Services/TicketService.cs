@@ -1,48 +1,95 @@
-﻿using AirlineAPI.DTOs;
+﻿using AirlineAPI.Data;
+using AirlineAPI.DTOs;
+using AirlineAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AirlineAPI.Services;
 
 public class TicketService : ITicketService
 {
-    private static readonly List<(string FlightNumber, DateTime Date, string PassengerName, int SeatNumber, bool CheckedIn)> Tickets = new();
-    private static int _seatCounter = 1;
+    private readonly AppDbContext _context;
 
-    public Task<string> BuyTicketAsync(BuyTicketDto dto)
+    public TicketService(AppDbContext context)
     {
-        // Mock kapasite kontrolü: Aynı uçuşta 5 koltuk sınırı olsun
-        int currentPassengerCount = Tickets
-            .Count(t => t.FlightNumber == dto.FlightNumber && t.Date.Date == dto.Date.Date);
-
-        if (currentPassengerCount >= 5)
-            return Task.FromResult("Sold out");
-
-        var seat = _seatCounter++;
-        Tickets.Add((dto.FlightNumber, dto.Date.Date, dto.PassengerName, seat, false));
-        return Task.FromResult($"Ticket purchased. Seat: {seat}");
+        _context = context;
     }
 
-    public Task<string> CheckInAsync(CheckInDto dto)
+    public async Task<string> BuyTicketAsync(BuyTicketDto dto)
     {
-        var index = Tickets.FindIndex(t =>
-            t.FlightNumber == dto.FlightNumber &&
-            t.Date.Date == dto.Date.Date &&
-            t.PassengerName == dto.PassengerName);
+        var flight = await _context.Flights
+            .FirstOrDefaultAsync(f => f.FlightNumber == dto.FlightNumber && f.DateFrom.Date == dto.Date.Date);
 
-        if (index == -1)
-            return Task.FromResult("Passenger not found");
+        if (flight == null)
+            return "Flight not found";
 
-        var ticket = Tickets[index];
-        Tickets[index] = (ticket.FlightNumber, ticket.Date, ticket.PassengerName, ticket.SeatNumber, true);
-        return Task.FromResult($"Checked in. Seat: {ticket.SeatNumber}");
+        var soldCount = await _context.Tickets.CountAsync(t => t.FlightId == flight.Id);
+        if (soldCount >= flight.Capacity)
+            return "Sold out";
+
+        var passenger = await _context.Passengers.FirstOrDefaultAsync(p => p.Name == dto.PassengerName);
+        if (passenger == null)
+        {
+            passenger = new Passenger { Name = dto.PassengerName };
+            _context.Passengers.Add(passenger);
+            await _context.SaveChangesAsync();
+        }
+
+        var seat = soldCount + 1;
+
+        var ticket = new Ticket
+        {
+            TicketNumber = $"T-{Guid.NewGuid().ToString().Substring(0, 6).ToUpper()}",
+            SeatNumber = seat,
+            CheckedIn = false,
+            FlightId = flight.Id,
+            PassengerId = passenger.Id
+        };
+
+        _context.Tickets.Add(ticket);
+        await _context.SaveChangesAsync();
+
+        return $"Ticket purchased. Seat: {seat}";
     }
 
-    public Task<List<string>> GetPassengerListAsync(PassengerListQueryDto dto)
+    public async Task<string> CheckInAsync(CheckInDto dto)
     {
-        var list = Tickets
-            .Where(t => t.FlightNumber == dto.FlightNumber && t.Date.Date == dto.Date.Date)
-            .Select(t => $"{t.PassengerName} - Seat {t.SeatNumber} - CheckedIn: {t.CheckedIn}")
+        var flight = await _context.Flights
+            .FirstOrDefaultAsync(f => f.FlightNumber == dto.FlightNumber && f.DateFrom.Date == dto.Date.Date);
+
+        if (flight == null)
+            return "Flight not found";
+
+        var passenger = await _context.Passengers.FirstOrDefaultAsync(p => p.Name == dto.PassengerName);
+        if (passenger == null)
+            return "Passenger not found";
+
+        var ticket = await _context.Tickets
+            .FirstOrDefaultAsync(t => t.FlightId == flight.Id && t.PassengerId == passenger.Id);
+
+        if (ticket == null)
+            return "Ticket not found";
+
+        ticket.CheckedIn = true;
+        await _context.SaveChangesAsync();
+
+        return $"Checked in. Seat: {ticket.SeatNumber}";
+    }
+
+    public async Task<List<string>> GetPassengerListAsync(PassengerListQueryDto dto)
+    {
+        var flight = await _context.Flights
+            .FirstOrDefaultAsync(f => f.FlightNumber == dto.FlightNumber && f.DateFrom.Date == dto.Date.Date);
+
+        if (flight == null)
+            return new List<string>();
+
+        var tickets = await _context.Tickets
+            .Include(t => t.Passenger)
+            .Where(t => t.FlightId == flight.Id)
+            .ToListAsync();
+
+        return tickets
+            .Select(t => $"{t.Passenger.Name} - Seat {t.SeatNumber} - CheckedIn: {t.CheckedIn}")
             .ToList();
-
-        return Task.FromResult(list);
     }
 }

@@ -29,7 +29,8 @@ public class FlightController : ControllerBase
         [FromQuery] DateTime dateFrom,
         [FromQuery] DateTime dateTo,
         [FromQuery] int numberOfPeople,
-        [FromQuery] bool isRoundTrip)
+        [FromQuery] bool isRoundTrip,
+        [FromQuery] int page = 1) 
     {
         var result = await _flightService.QueryFlightsAsync(new QueryFlightDto
         {
@@ -40,7 +41,15 @@ public class FlightController : ControllerBase
             NumberOfPeople = numberOfPeople,
             IsRoundTrip = isRoundTrip
         });
+        
+        var pageSize = 10;
+        var paged = result
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
 
-        return Ok(result);
+        return Ok(paged);
     }
+
+
 }
