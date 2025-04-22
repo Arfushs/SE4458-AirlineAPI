@@ -25,25 +25,10 @@ public class FlightController : ControllerBase
     }
 
     [HttpGet("query")]
-    public async Task<IActionResult> QueryFlights(
-        [FromQuery] string airportFrom,
-        [FromQuery] string airportTo,
-        [FromQuery] DateTime dateFrom,
-        [FromQuery] DateTime dateTo,
-        [FromQuery] int numberOfPeople,
-        [FromQuery] bool isRoundTrip,
-        [FromQuery] int page = 1) 
+    public async Task<IActionResult> QueryFlights([FromQuery] QueryFlightDto dto, [FromQuery] int page = 1)
     {
-        var result = await _flightService.QueryFlightsAsync(new QueryFlightDto
-        {
-            AirportFrom = airportFrom,
-            AirportTo = airportTo,
-            DateFrom = dateFrom,
-            DateTo = dateTo,
-            NumberOfPeople = numberOfPeople,
-            IsRoundTrip = isRoundTrip
-        });
-        
+        var result = await _flightService.QueryFlightsAsync(dto);
+
         var pageSize = 10;
         var paged = result
             .Skip((page - 1) * pageSize)
@@ -52,6 +37,7 @@ public class FlightController : ControllerBase
 
         return Ok(paged);
     }
+
 
 
 }

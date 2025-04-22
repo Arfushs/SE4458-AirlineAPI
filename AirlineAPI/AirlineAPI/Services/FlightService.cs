@@ -16,26 +16,39 @@ public class FlightService : IFlightService
 
     public async Task<string> AddFlightAsync(FlightDto dto)
     {
-        var flightNumber = $"FL-{Guid.NewGuid().ToString().Substring(0, 6).ToUpper()}";
+        Console.WriteLine("[INFO] AddFlightAsync started");
 
-        var flight = new Flight
+        try
         {
-            FlightNumber = flightNumber,
-            AirportFrom = dto.AirportFrom,
-            AirportTo = dto.AirportTo,
-            DateFrom = dto.DateFrom,
-            DateTo = dto.DateTo,
-            Duration = dto.Duration,
-            Capacity = dto.Capacity
-        };
+            var flightNumber = $"FL-{Guid.NewGuid().ToString().Substring(0, 6).ToUpper()}";
+            Console.WriteLine($"[INFO] Generated Flight Number: {flightNumber}");
 
-        _context.Flights.Add(flight);
-        await _context.SaveChangesAsync();
+            var flight = new Flight
+            {
+                FlightNumber = flightNumber,
+                AirportFrom = dto.AirportFrom,
+                AirportTo = dto.AirportTo,
+                DateFrom = dto.DateFrom,
+                DateTo = dto.DateTo,
+                Duration = dto.Duration,
+                Capacity = dto.Capacity
+            };
 
-        return $"Flight added: {flightNumber}";
+            _context.Flights.Add(flight);
+            await _context.SaveChangesAsync();
+
+            Console.WriteLine($"[SUCCESS] Flight saved: {flightNumber}");
+            return $"Flight added: {flightNumber}";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR] AddFlightAsync failed: {ex.Message}");
+            throw; 
+        }
     }
 
-    public async Task<List<FlightDto>> QueryFlightsAsync(QueryFlightDto dto)
+
+    public async Task<List<AvailableFlightDto>> QueryFlightsAsync(QueryFlightDto dto)
     {
         var query = await _context.Flights
             .Where(f =>
@@ -46,14 +59,11 @@ public class FlightService : IFlightService
                 f.Capacity >= dto.NumberOfPeople)
             .ToListAsync();
 
-        return query.Select(f => new FlightDto
+        return query.Select(f => new AvailableFlightDto
         {
-            AirportFrom = f.AirportFrom,
-            AirportTo = f.AirportTo,
-            DateFrom = f.DateFrom,
-            DateTo = f.DateTo,
-            Duration = f.Duration,
-            Capacity = f.Capacity
+            FlightNumber = f.FlightNumber,
+            Duration = f.Duration
         }).ToList();
     }
+
 }

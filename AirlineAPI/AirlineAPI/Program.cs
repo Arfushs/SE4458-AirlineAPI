@@ -69,6 +69,13 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
+// ✅ Veritabanı tabloları oluşturulsun
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.EnsureCreated(); // veya dbContext.Database.Migrate(); kullanabilirsin
+}
+
 // 🌐 Middleware pipeline
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -79,4 +86,11 @@ app.UseAuthentication(); // JWT doğrulaması burada başlar
 app.UseAuthorization();
 
 app.MapControllers();
+
+// 🔄 Başlangıç logu
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    Console.WriteLine("🚀 Application has started.");
+});
+
 app.Run();
