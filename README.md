@@ -35,6 +35,64 @@ The backend uses **SQLite** with **EF Core** and supports **JWT-based authentica
 
 ---
 
+## 🔐 Test Login Info & Token Usage
+
+Use the following login to get a token via `POST /Auth/login`:
+
+```json
+{
+  "username": "admin",
+  "password": "123456"
+}
+```
+
+Once received, use the token in Swagger by clicking **Authorize** and pasting:
+
+```
+Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+---
+
+## 🔍 Sample Request/Response Examples
+
+### `POST /Flight/add`
+```json
+{
+  "airportFrom": "IST",
+  "airportTo": "ESK",
+  "dateFrom": "2025-04-22T12:00:00",
+  "dateTo": "2025-04-22T14:00:00",
+  "duration": 120,
+  "capacity": 50
+}
+```
+
+### `POST /Ticket/buy`
+```json
+{
+  "flightNumber": "FL-123456",
+  "date": "2025-04-22T12:00:00",
+  "passengerName": "Berk S"
+}
+```
+
+### `PUT /Ticket/checkin`
+```json
+{
+  "flightNumber": "FL-123456",
+  "date": "2025-04-22T12:00:00",
+  "passengerName": "Berk S"
+}
+```
+
+### `GET /Flight/query`
+```http
+GET /api/v1/Flight/query?airportFrom=IST&airportTo=ESK&dateFrom=2025-04-21&dateTo=2025-04-23&numberOfPeople=2&isRoundTrip=false&page=1
+```
+
+---
+
 ## 🔍 Endpoints
 
 ### ✈️ Flight Controller
@@ -73,7 +131,7 @@ The backend uses **SQLite** with **EF Core** and supports **JWT-based authentica
 
 ## 🖋️ Entity-Relationship Diagram (ERD)
 
-
+WIP
 
 ---
 
@@ -130,5 +188,5 @@ dotnet run
 ## 🙌 Credits
 
 Developed by: **Can Berk Soydan**\
-Course: SE4458 
+Course: SE4458
 
