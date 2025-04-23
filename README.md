@@ -49,7 +49,7 @@ Use the following login to get a token via `POST /Auth/login`:
 Once received, use the token in Swagger by clicking **Authorize** and pasting:
 
 ```
-Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 ---
@@ -131,7 +131,7 @@ GET /api/v1/Flight/query?airportFrom=IST&airportTo=ESK&dateFrom=2025-04-21&dateT
 
 ## 🖋️ Entity-Relationship Diagram (ERD)
 
-WIP
+![ER Diagram](/ERDiagram.jpg)
 
 ---
 
