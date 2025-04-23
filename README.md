@@ -20,7 +20,7 @@ The backend uses **SQLite** with **EF Core** and supports **JWT-based authentica
 [https://airline-api-awfub5eterejhshk.germanywestcentral-01.azurewebsites.net/swagger](https://airline-api-awfub5eterejhshk.germanywestcentral-01.azurewebsites.net/swagger/index.html)
 
 **Video Walkthrough:**\
-▶️ [https://drive.google.com/file/d/xyz123/view](https://drive.google.com/file/d/xyz123/view) 
+▶️ [https://drive.google.com/drive/folders/1P2VvReDeamWViMxDvK_NLyT9r8fBN4Cd?usp=drive_link](https://drive.google.com/drive/folders/1P2VvReDeamWViMxDvK_NLyT9r8fBN4Cd?usp=drive_link) 
 
 ---
 
